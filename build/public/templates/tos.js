@@ -1,1 +1,0 @@
-!function(e){"object"==typeof module&&module.exports?module.exports=e():"function"==typeof define&&define.amd&&define(e)}(function(){function e(e,n,r,o,t){return"<h3>[[register:terms_of_use]]</h3>\r\n<hr/>\r\n\r\n"+(0,e.__escape)(r(n&&n.termsOfUse))+"\r\n"}return e.blocks={},e});

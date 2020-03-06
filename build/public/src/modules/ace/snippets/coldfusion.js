@@ -1,2 +1,0 @@
-define("ace/snippets/coldfusion",["require","exports","module"],function(e,o,i){"use strict";o.snippetText=undefined,o.scope="coldfusion"});(function(){window.require(["ace/snippets/coldfusion"],function(e){if(typeof module=="object"&&typeof exports=="object"&&module){module.exports=e}})})();
-//# sourceMappingURL=coldfusion.js.map

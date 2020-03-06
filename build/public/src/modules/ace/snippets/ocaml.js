@@ -1,2 +1,0 @@
-define("ace/snippets/ocaml",["require","exports","module"],function(e,o,t){"use strict";o.snippetText=undefined,o.scope="ocaml"});(function(){window.require(["ace/snippets/ocaml"],function(e){if(typeof module=="object"&&typeof exports=="object"&&module){module.exports=e}})})();
-//# sourceMappingURL=ocaml.js.map

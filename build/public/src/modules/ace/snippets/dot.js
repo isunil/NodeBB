@@ -1,2 +1,0 @@
-define("ace/snippets/dot",["require","exports","module"],function(e,o,t){"use strict";o.snippetText=undefined,o.scope="dot"});(function(){window.require(["ace/snippets/dot"],function(e){if(typeof module=="object"&&typeof exports=="object"&&module){module.exports=e}})})();
-//# sourceMappingURL=dot.js.map
