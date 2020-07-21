@@ -1,17 +1,19 @@
 'use strict';
 
-var assert = require('assert');
-var async = require('async');
+const assert = require('assert');
+const async = require('async');
+const util = require('util');
+const sleep = util.promisify(setTimeout);
 
-var db = require('./mocks/databasemock');
-var Flags = require('../src/flags');
-var Categories = require('../src/categories');
-var Topics = require('../src/topics');
-var Posts = require('../src/posts');
-var User = require('../src/user');
-var Groups = require('../src/groups');
-var Meta = require('../src/meta');
-var Privileges = require('../src/privileges');
+const db = require('./mocks/databasemock');
+const Flags = require('../src/flags');
+const Categories = require('../src/categories');
+const Topics = require('../src/topics');
+const Posts = require('../src/posts');
+const User = require('../src/user');
+const Groups = require('../src/groups');
+const Meta = require('../src/meta');
+const Privileges = require('../src/privileges');
 
 describe('Flags', function () {
 	let uid1;
@@ -291,13 +293,13 @@ describe('Flags', function () {
 
 				history.forEach(function (change) {
 					switch (change.attribute) {
-					case 'state':
-						assert.strictEqual('[[flags:state-wip]]', change.value);
-						break;
+						case 'state':
+							assert.strictEqual('[[flags:state-wip]]', change.value);
+							break;
 
-					case 'assignee':
-						assert.strictEqual(1, change.value);
-						break;
+						case 'assignee':
+							assert.strictEqual(1, change.value);
+							break;
 					}
 				});
 
@@ -362,6 +364,28 @@ describe('Flags', function () {
 
 			const state = await db.getObjectField('flag:1', 'state');
 			assert.strictEqual('wip', state);
+		});
+
+		it('should rescind notification if flag is resolved', async () => {
+			const SocketFlags = require('../src/socket.io/flags.js');
+			const result = await Topics.post({
+				cid: category.cid,
+				uid: uid3,
+				title: 'Topic to flag',
+				content: 'This is flaggable content',
+			});
+			const flagId = await SocketFlags.create({ uid: uid1 }, { type: 'post', id: result.postData.pid, reason: 'spam' });
+			await sleep(2000);
+
+			let userNotifs = await User.notifications.getAll(adminUid);
+			assert(userNotifs.includes('flag:post:' + result.postData.pid + ':uid:' + uid1));
+
+			await Flags.update(flagId, adminUid, {
+				state: 'resolved',
+			});
+
+			userNotifs = await User.notifications.getAll(adminUid);
+			assert(!userNotifs.includes('flag:post:' + result.postData.pid + ':uid:' + uid1));
 		});
 	});
 
@@ -577,7 +601,8 @@ describe('Flags', function () {
 						throw err;
 					}
 
-					assert.strictEqual(entries + 1, history.length);
+					// 1 for the new event appended, 2 for username and email change
+					assert.strictEqual(entries + 3, history.length);
 					done();
 				});
 			});
@@ -631,7 +656,7 @@ describe('Flags', function () {
 			it('should not allow flagging post in private category', async function () {
 				const category = await Categories.create({ name: 'private category' });
 
-				await Privileges.categories.rescind(['topics:read'], category.cid, 'registered-users');
+				await Privileges.categories.rescind(['groups:topics:read'], category.cid, 'registered-users');
 				const result = await Topics.post({
 					cid: category.cid,
 					uid: adminUid,

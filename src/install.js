@@ -54,7 +54,9 @@ function checkSetupFlag(next) {
 		if (nconf.get('setup')) {
 			setupVal = JSON.parse(nconf.get('setup'));
 		}
-	} catch (err) {}
+	} catch (err) {
+		winston.error('Invalid json in nconf.get(\'setup\'), ignoring setup values');
+	}
 
 	if (setupVal && typeof setupVal === 'object') {
 		if (setupVal['admin:username'] && setupVal['admin:password'] && setupVal['admin:password:confirm'] && setupVal['admin:email']) {
@@ -402,22 +404,22 @@ function createGlobalModeratorsGroup(next) {
 function giveGlobalPrivileges(next) {
 	var privileges = require('./privileges');
 	var defaultPrivileges = [
-		'chat', 'upload:post:image', 'signature', 'search:content',
-		'search:users', 'search:tags', 'view:users', 'view:tags', 'view:groups',
-		'local:login',
+		'groups:chat', 'groups:upload:post:image', 'groups:signature', 'groups:search:content',
+		'groups:search:users', 'groups:search:tags', 'groups:view:users', 'groups:view:tags', 'groups:view:groups',
+		'groups:local:login',
 	];
 	async.waterfall([
 		function (next) {
 			privileges.global.give(defaultPrivileges, 'registered-users', next);
 		},
 		function (next) {
-			privileges.global.give(defaultPrivileges.concat(['ban', 'upload:post:file', 'view:users:info']), 'Global Moderators', next);
+			privileges.global.give(defaultPrivileges.concat(['groups:ban', 'groups:upload:post:file', 'groups:view:users:info']), 'Global Moderators', next);
 		},
 		function (next) {
-			privileges.global.give(['view:users', 'view:tags', 'view:groups'], 'guests', next);
+			privileges.global.give(['groups:view:users', 'groups:view:tags', 'groups:view:groups'], 'guests', next);
 		},
 		function (next) {
-			privileges.global.give(['view:users', 'view:tags', 'view:groups'], 'spiders', next);
+			privileges.global.give(['groups:view:users', 'groups:view:tags', 'groups:view:groups'], 'spiders', next);
 		},
 	], next);
 }
@@ -605,7 +607,7 @@ install.save = function (server_conf, callback) {
 
 	fs.writeFile(serverConfigPath, JSON.stringify(server_conf, null, 4), function (err) {
 		if (err) {
-			winston.error('Error saving server configuration!', err);
+			winston.error('Error saving server configuration!', err.stack);
 			return callback(err);
 		}
 

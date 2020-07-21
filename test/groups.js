@@ -579,7 +579,7 @@ describe('Groups', function () {
 					Groups.create({ name: groupName }, next);
 				},
 				function (groupData, next) {
-					privileges.categories.give(['topics:create'], cid, groupName, next);
+					privileges.categories.give(['groups:topics:create'], cid, groupName, next);
 				},
 				function (next) {
 					Groups.isMember(groupName, 'cid:1:privileges:groups:topics:create', next);
@@ -1387,9 +1387,9 @@ describe('Groups', function () {
 		});
 
 		it('should fail if user is not logged in or not owner', function (done) {
-			socketGroups.cover.update({ uid: 0 }, {}, function (err) {
+			socketGroups.cover.update({ uid: 0 }, { imageData: 'asd' }, function (err) {
 				assert.equal(err.message, '[[error:no-privileges]]');
-				socketGroups.cover.update({ uid: regularUid }, { groupName: 'Test' }, function (err) {
+				socketGroups.cover.update({ uid: regularUid }, { groupName: 'Test', imageData: 'asd' }, function (err) {
 					assert.equal(err.message, '[[error:no-privileges]]');
 					done();
 				});
@@ -1404,7 +1404,7 @@ describe('Groups', function () {
 					type: 'image/png',
 				},
 			};
-			socketGroups.cover.update({ uid: adminUid }, data, function (err, data) {
+			Groups.updateCover({ uid: adminUid }, data, function (err, data) {
 				assert.ifError(err);
 				Groups.getGroupFields('Test', ['cover:url'], function (err, groupData) {
 					assert.ifError(err);
@@ -1431,6 +1431,20 @@ describe('Groups', function () {
 					assert.equal(nconf.get('relative_path') + data.url, groupData['cover:url']);
 					done();
 				});
+			});
+		});
+
+		it('should fail to upload group cover with invalid image', function (done) {
+			var data = {
+				groupName: 'Test',
+				file: {
+					path: imagePath,
+					type: 'image/png',
+				},
+			};
+			socketGroups.cover.update({ uid: adminUid }, data, function (err) {
+				assert.equal(err.message, '[[error:invalid-data]]');
+				done();
 			});
 		});
 
@@ -1464,33 +1478,6 @@ describe('Groups', function () {
 			Groups.updateCoverPosition('', '50% 50%', function (err) {
 				assert.equal(err.message, '[[error:invalid-data]]');
 				done();
-			});
-		});
-
-		it('should error if user is not owner of group', function (done) {
-			helpers.loginUser('regularuser', '123456', function (err, jar, csrf_token) {
-				assert.ifError(err);
-				helpers.uploadFile(nconf.get('url') + '/api/groups/uploadpicture', logoPath, { params: JSON.stringify({ groupName: 'Test' }) }, jar, csrf_token, function (err, res, body) {
-					assert.ifError(err);
-					assert.equal(res.statusCode, 500);
-					assert.equal(body.error, '[[error:no-privileges]]');
-					done();
-				});
-			});
-		});
-
-		it('should upload group cover with api route', function (done) {
-			helpers.loginUser('admin', '123456', function (err, jar, csrf_token) {
-				assert.ifError(err);
-				helpers.uploadFile(nconf.get('url') + '/api/groups/uploadpicture', logoPath, { params: JSON.stringify({ groupName: 'Test' }) }, jar, csrf_token, function (err, res, body) {
-					assert.ifError(err);
-					assert.equal(res.statusCode, 200);
-					Groups.getGroupFields('Test', ['cover:url'], function (err, groupData) {
-						assert.ifError(err);
-						assert.equal(nconf.get('relative_path') + body[0].url, groupData['cover:url']);
-						done();
-					});
-				});
 			});
 		});
 

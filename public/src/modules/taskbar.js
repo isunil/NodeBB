@@ -153,7 +153,7 @@ define('taskbar', ['benchpress', 'translator'], function (Benchpress, translator
 		translator.translate(data.options.title, function (taskTitle) {
 			var title = $('<div></div>').text(taskTitle || 'NodeBB Task').html();
 
-			var	taskbarEl = $('<li />')
+			var	taskbarEl = $('<li></li>')
 				.addClass(data.options.className)
 				.html('<a href="#"' + (data.options.image ? ' style="background-image: url(\'' + data.options.image + '\'); background-size: cover;"' : '') + '>' +
 					(data.options.icon ? '<i class="fa ' + data.options.icon + '"></i> ' : '') +
@@ -183,18 +183,18 @@ define('taskbar', ['benchpress', 'translator'], function (Benchpress, translator
 
 	var processUpdate = function (element, key, value) {
 		switch (key) {
-		case 'title':
-			element.find('[component="taskbar/title"]').text(value);
-			break;
-		case 'icon':
-			element.find('i').attr('class', 'fa fa-' + value);
-			break;
-		case 'image':
-			element.find('a').css('background-image', 'url("' + value + '")');
-			break;
-		case 'background-color':
-			element.find('a').css('background-color', value);
-			break;
+			case 'title':
+				element.find('[component="taskbar/title"]').text(value);
+				break;
+			case 'icon':
+				element.find('i').attr('class', 'fa fa-' + value);
+				break;
+			case 'image':
+				element.find('a').css('background-image', 'url("' + value + '")');
+				break;
+			case 'background-color':
+				element.find('a').css('background-color', value);
+				break;
 		}
 	};
 

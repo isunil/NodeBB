@@ -27,11 +27,15 @@
 	"filter-cid-all": "Все категории",
 	"apply-filters": "Применить фильтры",
 
-	"quick-links": "Быстрые ссылки",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "Отмеченный пользователь",
 	"view-profile": "Просмотреть профиль",
 	"start-new-chat": "Начать новый чат",
 	"go-to-target": "Показать предмет жалобы",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "Открыть профиль",
 	"user-edit": "Изменить профиль",
@@ -40,8 +44,7 @@
 	"add-note": "Добавить примечание",
 	"no-notes": "Нет примечаний.",
 
-	"history": "История жалобы",
-	"back": "Вернуться к списку жалоб",
+	"history": "Account &amp; Flag History",
 	"no-history": "Нет истории жалобы.",
 
 	"state-all": "Все состояния",

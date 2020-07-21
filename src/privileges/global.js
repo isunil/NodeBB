@@ -71,20 +71,10 @@ module.exports = function (privileges) {
 			user.isAdministrator(uid),
 		]);
 
-		const privData = _.zipObject(privileges.global.userPrivilegeList, userPrivileges);
+		const combined = userPrivileges.map(allowed => allowed || isAdministrator);
+		const privData = _.zipObject(privileges.global.userPrivilegeList, combined);
 
-		return await plugins.fireHook('filter:privileges.global.get', {
-			chat: privData.chat || isAdministrator,
-			'upload:post:image': privData['upload:post:image'] || isAdministrator,
-			'upload:post:file': privData['upload:post:file'] || isAdministrator,
-			'search:content': privData['search:content'] || isAdministrator,
-			'search:users': privData['search:users'] || isAdministrator,
-			'search:tags': privData['search:tags'] || isAdministrator,
-			'view:users': privData['view:users'] || isAdministrator,
-			'view:tags': privData['view:tags'] || isAdministrator,
-			'view:groups': privData['view:groups'] || isAdministrator,
-			'view:users:info': privData['view:users:info'] || isAdministrator,
-		});
+		return await plugins.fireHook('filter:privileges.global.get', privData);
 	};
 
 	privileges.global.can = async function (privilege, uid) {
@@ -101,10 +91,18 @@ module.exports = function (privileges) {
 
 	privileges.global.give = async function (privileges, groupName) {
 		await helpers.giveOrRescind(groups.join, privileges, 0, groupName);
+		plugins.fireHook('action:privileges.global.give', {
+			privileges: privileges,
+			groupNames: Array.isArray(groupName) ? groupName : [groupName],
+		});
 	};
 
 	privileges.global.rescind = async function (privileges, groupName) {
 		await helpers.giveOrRescind(groups.leave, privileges, 0, groupName);
+		plugins.fireHook('action:privileges.global.rescind', {
+			privileges: privileges,
+			groupNames: Array.isArray(groupName) ? groupName : [groupName],
+		});
 	};
 
 	privileges.global.userPrivileges = async function (uid) {

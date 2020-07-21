@@ -146,7 +146,7 @@ uploadsController.uploadFavicon = async function (req, res, next) {
 uploadsController.uploadTouchIcon = async function (req, res, next) {
 	const uploadedFile = req.files.files[0];
 	const allowedTypes = ['image/png'];
-	const sizes = [36, 48, 72, 96, 144, 192];
+	const sizes = [36, 48, 72, 96, 144, 192, 512];
 
 	if (validateUpload(res, uploadedFile, allowedTypes)) {
 		try {
@@ -243,7 +243,7 @@ async function uploadImage(filename, folder, uploadedFile, req, res, next) {
 	let imageData;
 	try {
 		if (plugins.hasListeners('filter:uploadImage')) {
-			imageData = await plugins.fireHook('filter:uploadImage', { image: uploadedFile, uid: req.uid });
+			imageData = await plugins.fireHook('filter:uploadImage', { image: uploadedFile, uid: req.uid, folder: folder });
 		} else {
 			imageData = await file.saveFileToLocal(filename, folder, uploadedFile.path);
 		}

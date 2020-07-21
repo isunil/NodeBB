@@ -101,7 +101,7 @@ image.stripEXIF = async function (path) {
 		const sharp = requireSharp();
 		await sharp(buffer, { failOnError: true }).rotate().toFile(path);
 	} catch (err) {
-		winston.error(err);
+		winston.error(err.stack);
 	}
 };
 
@@ -149,6 +149,7 @@ image.uploadImage = async function (filename, folder, imageData) {
 		return await plugins.fireHook('filter:uploadImage', {
 			image: imageData,
 			uid: imageData.uid,
+			folder: folder,
 		});
 	}
 	await image.isFileTypeAllowed(imageData.path);

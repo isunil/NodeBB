@@ -48,9 +48,9 @@ module.exports.app = app;
 
 server.on('error', function (err) {
 	if (err.code === 'EADDRINUSE') {
-		winston.error('NodeBB address in use, exiting...', err);
+		winston.error('NodeBB address in use, exiting...', err.stack);
 	} else {
-		winston.error(err);
+		winston.error(err.stack);
 	}
 
 	throw err;
@@ -145,7 +145,7 @@ function setupExpressApp(app) {
 
 	configureBodyParser(app);
 
-	app.use(cookieParser());
+	app.use(cookieParser(nconf.get('secret')));
 	const userAgentMiddleware = useragent.express();
 	app.use(function userAgent(req, res, next) {
 		userAgentMiddleware(req, res, next);
@@ -265,7 +265,7 @@ function listen(callback) {
 		oldUmask = process.umask('0000');
 		module.exports.testSocket(socketPath, function (err) {
 			if (err) {
-				winston.error('[startup] NodeBB was unable to secure domain socket access (' + socketPath + ')', err);
+				winston.error('[startup] NodeBB was unable to secure domain socket access (' + socketPath + ')', err.stack);
 				throw err;
 			}
 

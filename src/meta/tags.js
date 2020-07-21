@@ -4,7 +4,7 @@ const nconf = require('nconf');
 const winston = require('winston');
 
 const plugins = require('../plugins');
-const Meta = require('../meta');
+const Meta = require('./index');
 const utils = require('../utils');
 
 const Tags = module.exports;
@@ -56,6 +56,10 @@ Tags.parse = async (req, data, meta, link) => {
 	}, {
 		rel: 'manifest',
 		href: nconf.get('relative_path') + '/manifest.json',
+	}, {
+		rel: 'preload',
+		href: nconf.get('relative_path') + '/assets/js-enabled.css?' + (Meta.config['cache-buster'] ? '?' + Meta.config['cache-buster'] : ''),
+		as: 'style',
 	}];
 
 	if (plugins.hasListeners('filter:search.query')) {

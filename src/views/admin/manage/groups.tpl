@@ -1,9 +1,13 @@
+<div class="row">
+	<div class="col-lg-3 pull-right">
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="[[admin/manage/groups:search-placeholder]]" id="group-search">
+			<span class="input-group-addon search-button"><i class="fa fa-search"></i></span>
+		</div>
+	</div>
+</div>
 <div class="row groups">
 	<div class="col-xs-12">
-		<div>
-			<input id="group-search" type="text" class="form-control" placeholder="[[admin/manage/groups:search-placeholder]]" />
-		</div>
-
 		<table class="table table-striped groups-list">
 			<thead>
 				<tr>
@@ -19,7 +23,7 @@
 				<!-- BEGIN groups -->
 				<tr data-groupname="{groups.displayName}">
 					<td>
-						{groups.displayName}
+						<a href="{config.relative_path}/admin/manage/groups/{groups.nameEncoded}">{groups.displayName}</a>
 					</td>
 					<td>
 						<span class="label label-default" style="color:{groups.textColor}; background-color: {groups.labelColor};"><!-- IF groups.icon --><i class="fa {groups.icon}"></i> <!-- ENDIF groups.icon -->{groups.userTitle}</span>
@@ -42,13 +46,15 @@
 						{groups.memberCount}
 					</td>
 					<td>
-						<div class="btn-group ">
-							<a href="{config.relative_path}/admin/manage/groups/{groups.nameEncoded}" class="btn btn-default btn-xs">
-								<i class="fa fa-edit"></i> [[admin/manage/groups:edit]]
-							</a>
-							<!-- IF !groups.system -->
-							<button class="btn btn-danger btn-xs" data-action="delete"><i class="fa fa-times"></i></button>
-							<!-- ENDIF !groups.system -->
+						<div class="btn-group">
+							<button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" type="button"><i class="fa fa-fw fa-ellipsis-h"></i></button>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li><a href="{config.relative_path}/admin/manage/groups/{groups.nameEncoded}"><i class="fa fa-fw fa-edit"></i> [[admin/manage/groups:edit]]</a></li>
+								<li><a href="{config.relative_path}/api/admin/groups/{groups.nameEncoded}/csv"><i class="fa fa-fw fa-file-text"></i> [[admin/manage/groups:download-csv]]</a></li>
+								<!-- IF !groups.system -->
+								<li data-action="delete"><a href="#"><i class="fa fa-fw fa-times"></i> [[admin/manage/groups:delete]]</a></li>
+								<!-- ENDIF !groups.system -->
+							</ul>
 						</div>
 					</td>
 				</tr>

@@ -27,11 +27,15 @@
 	"filter-cid-all": "ทุกหมวดหมู่",
 	"apply-filters": "ใช้งานฟิลเตอร์",
 
-	"quick-links": "ลิ้งค์ด่วน",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "ผู้ใช้ที่ถูกปักธง",
 	"view-profile": "ดูโปรไฟล์",
 	"start-new-chat": "เริ่มแชทใหม่",
 	"go-to-target": "ดูเป้าหมายการปักธง",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "ดูโปรไฟล์",
 	"user-edit": "แก้ไขโปรไฟล์",
@@ -40,8 +44,7 @@
 	"add-note": "เพิ่มโน้ต",
 	"no-notes": "ไม่มีโน้ตที่แชร์",
 
-	"history": "ประวัติการปักธง",
-	"back": "กลับไปยังรายการปักธง",
+	"history": "Account &amp; Flag History",
 	"no-history": "ไม่มีประวัติปักธง",
 
 	"state-all": "สถานะทั้งหมด",

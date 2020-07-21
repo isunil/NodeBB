@@ -5,8 +5,13 @@ define('forum/flags/list', ['components', 'Chart'], function (components, Chart)
 
 	Flags.init = function () {
 		Flags.enableFilterForm();
-		Flags.enableChatButtons();
-		Flags.handleGraphs();
+
+		var graphWrapper = $('#flags-daily-wrapper');
+		var graphFooter = graphWrapper.siblings('.panel-footer');
+		$('#flags-daily-wrapper').one('shown.bs.collapse', function () {
+			Flags.handleGraphs();
+		});
+		graphFooter.on('click', graphWrapper.collapse.bind(graphWrapper, 'toggle'));
 	};
 
 	Flags.enableFilterForm = function () {
@@ -19,17 +24,11 @@ define('forum/flags/list', ['components', 'Chart'], function (components, Chart)
 			}
 		}
 
-		filtersEl.find('button').on('click', function () {
+		document.getElementById('apply-filters').addEventListener('click', function () {
 			var payload = filtersEl.serializeArray().filter(function (item) {
 				return !!item.value;
 			});
-			ajaxify.go('flags?' + $.param(payload));
-		});
-	};
-
-	Flags.enableChatButtons = function () {
-		$('[data-chat]').on('click', function () {
-			app.newChat(this.getAttribute('data-chat'));
+			ajaxify.go('flags?' + (payload.length ? $.param(payload) : 'reset=1'));
 		});
 	};
 
@@ -74,6 +73,7 @@ define('forum/flags/list', ['components', 'Chart'], function (components, Chart)
 					yAxes: [{
 						ticks: {
 							beginAtZero: true,
+							precision: 0,
 						},
 					}],
 				},

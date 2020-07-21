@@ -160,13 +160,13 @@ describe('Post\'s', function () {
 
 	describe('voting', function () {
 		it('should fail to upvote post if group does not have upvote permission', function (done) {
-			privileges.categories.rescind(['posts:upvote', 'posts:downvote'], cid, 'registered-users', function (err) {
+			privileges.categories.rescind(['groups:posts:upvote', 'groups:posts:downvote'], cid, 'registered-users', function (err) {
 				assert.ifError(err);
 				socketPosts.upvote({ uid: voterUid }, { pid: postData.pid, room_id: 'topic_1' }, function (err) {
 					assert.equal(err.message, '[[error:no-privileges]]');
 					socketPosts.downvote({ uid: voterUid }, { pid: postData.pid, room_id: 'topic_1' }, function (err) {
 						assert.equal(err.message, '[[error:no-privileges]]');
-						privileges.categories.give(['posts:upvote', 'posts:downvote'], cid, 'registered-users', function (err) {
+						privileges.categories.give(['groups:posts:upvote', 'groups:posts:downvote'], cid, 'registered-users', function (err) {
 							assert.ifError(err);
 							done();
 						});
@@ -241,6 +241,42 @@ describe('Post\'s', function () {
 					done();
 				});
 			});
+		});
+
+		it('should prevent downvoting more than total daily limit', async () => {
+			const oldValue = meta.config.downvotesPerDay;
+			meta.config.downvotesPerDay = 1;
+			let err;
+			const p1 = await topics.reply({
+				uid: voteeUid,
+				tid: topicData.tid,
+				content: 'raw content',
+			});
+			try {
+				await socketPosts.downvote({ uid: voterUid }, { pid: p1.pid, room_id: 'topic_1' });
+			} catch (_err) {
+				err = _err;
+			}
+			assert.equal(err.message, '[[error:too-many-downvotes-today, 1]]');
+			meta.config.downvotesPerDay = oldValue;
+		});
+
+		it('should prevent downvoting target user more than total daily limit', async () => {
+			const oldValue = meta.config.downvotesPerUserPerDay;
+			meta.config.downvotesPerUserPerDay = 1;
+			let err;
+			const p1 = await topics.reply({
+				uid: voteeUid,
+				tid: topicData.tid,
+				content: 'raw content',
+			});
+			try {
+				await socketPosts.downvote({ uid: voterUid }, { pid: p1.pid, room_id: 'topic_1' });
+			} catch (_err) {
+				err = _err;
+			}
+			assert.equal(err.message, '[[error:too-many-downvotes-today-user, 1]]');
+			meta.config.downvotesPerUserPerDay = oldValue;
 		});
 	});
 
@@ -320,7 +356,7 @@ describe('Post\'s', function () {
 				tid = topicPostData.topicData.tid;
 				mainPid = topicPostData.postData.pid;
 				replyPid = replyData.pid;
-				privileges.categories.give(['purge'], cid, 'registered-users', done);
+				privileges.categories.give(['groups:purge'], cid, 'registered-users', done);
 			});
 		});
 
@@ -351,7 +387,7 @@ describe('Post\'s', function () {
 					groups.join('Global Moderators', uid, next);
 				},
 				function (next) {
-					privileges.categories.rescind(['posts:view_deleted'], cid, 'Global Moderators', next);
+					privileges.categories.rescind(['groups:posts:view_deleted'], cid, 'Global Moderators', next);
 				},
 				function (next) {
 					helpers.loginUser('global mod', '123456', function (err, _jar) {
@@ -361,7 +397,7 @@ describe('Post\'s', function () {
 						request(nconf.get('url') + '/api/topic/' + tid, { jar: jar, json: true }, function (err, res, body) {
 							assert.ifError(err);
 							assert.equal(body.posts[1].content, '[[topic:post_is_deleted]]');
-							privileges.categories.give(['posts:view_deleted'], cid, 'Global Moderators', next);
+							privileges.categories.give(['groups:posts:view_deleted'], cid, 'Global Moderators', next);
 						});
 					});
 				},
@@ -448,7 +484,7 @@ describe('Post\'s', function () {
 				}, function (err, data) {
 					assert.ifError(err);
 					replyPid = data.pid;
-					privileges.categories.give(['posts:edit'], cid, 'registered-users', done);
+					privileges.categories.give(['groups:posts:edit'], cid, 'registered-users', done);
 				});
 			});
 		});
@@ -591,10 +627,18 @@ describe('Post\'s', function () {
 		});
 
 		it('should allow registered-users group to view diffs', function (done) {
-			socketPosts.getDiffs({ uid: 1 }, { pid: 1 }, function (err, timestamps) {
+			socketPosts.getDiffs({ uid: 1 }, { pid: 1 }, function (err, data) {
 				assert.ifError(err);
-				assert.equal(true, Array.isArray(timestamps));
-				assert.strictEqual(1, timestamps.length);
+
+				assert.strictEqual('boolean', typeof data.editable);
+				assert.strictEqual(false, data.editable);
+
+				assert.equal(true, Array.isArray(data.timestamps));
+				assert.strictEqual(1, data.timestamps.length);
+
+				assert.equal(true, Array.isArray(data.revisions));
+				assert.strictEqual(data.timestamps.length, data.revisions.length);
+				['timestamp', 'username'].every(prop => Object.keys(data.revisions[0]).includes(prop));
 				done();
 			});
 		});
@@ -783,7 +827,7 @@ describe('Post\'s', function () {
 			}, function (err, postData) {
 				assert.ifError(err);
 				pid = postData.pid;
-				privileges.categories.rescind(['topics:read'], cid, 'guests', done);
+				privileges.categories.rescind(['groups:topics:read'], cid, 'guests', done);
 			});
 		});
 
@@ -902,7 +946,7 @@ describe('Post\'s', function () {
 		it('should get pid index', function (done) {
 			socketPosts.getPidIndex({ uid: voterUid }, { pid: pid, tid: topicData.tid, topicPostSort: 'oldest_to_newest' }, function (err, index) {
 				assert.ifError(err);
-				assert.equal(index, 2);
+				assert.equal(index, 4);
 				done();
 			});
 		});
@@ -968,6 +1012,7 @@ describe('Post\'s', function () {
 	describe('post queue', function () {
 		var uid;
 		var queueId;
+		var topicQueueId;
 		var jar;
 		before(function (done) {
 			meta.config.postQueue = 1;
@@ -989,6 +1034,7 @@ describe('Post\'s', function () {
 				assert.ifError(err);
 				assert.strictEqual(result.queued, true);
 				assert.equal(result.message, '[[success:post-queued]]');
+				topicQueueId = result.id;
 
 				done();
 			});
@@ -1033,6 +1079,18 @@ describe('Post\'s', function () {
 					assert.ifError(err);
 					assert.equal(body.posts[1].type, 'reply');
 					assert.equal(body.posts[1].data.content, 'newContent');
+					done();
+				});
+			});
+		});
+
+		it('should edit topic title in queue', function (done) {
+			socketPosts.editQueuedContent({ uid: globalModUid }, { id: topicQueueId, title: 'new topic title' }, function (err) {
+				assert.ifError(err);
+				request(nconf.get('url') + '/api/post-queue', { jar: jar, json: true }, function (err, res, body) {
+					assert.ifError(err);
+					assert.equal(body.posts[0].type, 'topic');
+					assert.equal(body.posts[0].data.title, 'new topic title');
 					done();
 				});
 			});

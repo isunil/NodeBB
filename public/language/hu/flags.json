@@ -27,11 +27,15 @@
 	"filter-cid-all": "Minden kategória",
 	"apply-filters": "Szűrők alkalmazása",
 
-	"quick-links": "Quick Links",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "Megjelölt felhasználó",
 	"view-profile": "Profil megtekintése",
 	"start-new-chat": "Új chat indítása",
 	"go-to-target": "View Flag Target",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "View Profile",
 	"user-edit": "Edit Profile",
@@ -40,8 +44,7 @@
 	"add-note": "Add Note",
 	"no-notes": "No shared notes.",
 
-	"history": "Flag History",
-	"back": "Back to Flags List",
+	"history": "Account &amp; Flag History",
 	"no-history": "No flag history.",
 
 	"state-all": "All states",

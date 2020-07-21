@@ -27,11 +27,15 @@
 	"filter-cid-all": "全てのカテゴリ",
 	"apply-filters": "フィルターを追加",
 
-	"quick-links": "クイックリンク",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "フラグを立てたユーザー",
 	"view-profile": "プロフィールを見る",
 	"start-new-chat": "新しいチャットを開始",
 	"go-to-target": "フラグのターゲットを表示",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "プロフィールを見る",
 	"user-edit": "プロフィールを編集",
@@ -40,8 +44,7 @@
 	"add-note": "ノートを追加",
 	"no-notes": "共有ノートはありません。",
 
-	"history": "フラグ履歴",
-	"back": "フラグリストに戻る",
+	"history": "Account &amp; Flag History",
 	"no-history": "フラグ履歴がありません",
 
 	"state-all": "全ての状態",

@@ -28,11 +28,17 @@ infoController.get = function (req, res) {
 			}
 			return 0;
 		});
+
+		let port = nconf.get('port');
+		if (!Array.isArray(port) && !isNaN(parseInt(port, 10))) {
+			port = [port];
+		}
+
 		res.render('admin/development/info', {
 			info: data,
 			infoJSON: JSON.stringify(data, null, 4),
 			host: os.hostname(),
-			port: nconf.get('port'),
+			port: port,
 			nodeCount: data.length,
 			timeout: timeoutMS,
 			ip: req.ip,
@@ -46,7 +52,7 @@ pubsub.on('sync:node:info:start', async function () {
 		data.id = os.hostname() + ':' + nconf.get('port');
 		pubsub.publish('sync:node:info:end', { data: data, id: data.id });
 	} catch (err) {
-		winston.error(err);
+		winston.error(err.stack);
 	}
 });
 
@@ -93,7 +99,7 @@ async function getGitInfo() {
 	function get(cmd, callback) {
 		exec(cmd, function (err, stdout) {
 			if (err) {
-				winston.error(err);
+				winston.error(err.stack);
 			}
 			callback(null, stdout ? stdout.replace(/\n$/, '') : 'no-git-info');
 		});

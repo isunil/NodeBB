@@ -27,11 +27,15 @@
 	"filter-cid-all": "Alla kategorier",
 	"apply-filters": "Applicera filter",
 
-	"quick-links": "Snabblänkar",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "Flaggad användare",
 	"view-profile": "Visa profil",
 	"start-new-chat": "Påbörja ny chatt",
 	"go-to-target": "Visa flaggans ämne",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "Visa profil",
 	"user-edit": "Redigera profil",
@@ -40,8 +44,7 @@
 	"add-note": "Lägg till anteckning",
 	"no-notes": "Inga delade anteckningar.",
 
-	"history": "Flagghistorik",
-	"back": "Tillbaks till flagglista",
+	"history": "Account &amp; Flag History",
 	"no-history": "Ingen flagghitorik.",
 
 	"state-all": "Alla status",

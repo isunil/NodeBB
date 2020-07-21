@@ -8,7 +8,7 @@ const util = require('util');
 
 const db = require('../database');
 const pubsub = require('../pubsub');
-const Meta = require('../meta');
+const Meta = require('./index');
 const cacheBuster = require('./cacheBuster');
 const defaults = require('../../install/data/defaults');
 
@@ -44,7 +44,7 @@ function deserialize(config) {
 			try {
 				deserialized[key] = JSON.parse(config[key] || '[]');
 			} catch (err) {
-				winston.error(err);
+				winston.error(err.stack);
 				deserialized[key] = defaults[key];
 			}
 		} else {
@@ -163,6 +163,9 @@ Configs.cookie = {
 		if (relativePath !== '') {
 			cookie.path = relativePath;
 		}
+
+		// Ideally configurable from ACP, but cannot be "Strict" as then top-level access will treat it as guest.
+		cookie.sameSite = 'Lax';
 
 		return cookie;
 	},

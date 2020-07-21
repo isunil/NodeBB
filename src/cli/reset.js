@@ -93,7 +93,7 @@ exports.reset = async function (options) {
 };
 
 async function resetSettings() {
-	await privileges.global.give(['local:login'], 'registered-users');
+	await privileges.global.give(['groups:local:login'], 'registered-users');
 	winston.info('[reset] registered-users given login privilege');
 	winston.info('[reset] Settings reset to default');
 }
@@ -141,7 +141,7 @@ async function resetPlugin(pluginId) {
 			throw new Error('plugin-not-active');
 		}
 	} catch (err) {
-		winston.error('[reset] Could not disable plugin: ' + pluginId + ' encountered error %s', err);
+		winston.error('[reset] Could not disable plugin: ' + pluginId + ' encountered error %s', err.stack);
 		throw err;
 	}
 }

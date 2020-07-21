@@ -27,11 +27,15 @@
 	"filter-cid-all": "Visas kategorijas",
 	"apply-filters": "Iespējot filtrus",
 
-	"quick-links": "Ātrās saites",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "Atzīmētais lietotājs",
 	"view-profile": "Skatīt profilu",
 	"start-new-chat": "Sākt jaunu sarunu",
 	"go-to-target": "Skatīt atzīmēto rakstu",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "Skatīt profilu",
 	"user-edit": "Rediģēt profilu",
@@ -40,8 +44,7 @@
 	"add-note": "Pievienot piezīmi",
 	"no-notes": "Nav kopīgu piezīmju.",
 
-	"history": "Atzīmju vēsture",
-	"back": "Atpakaļ uz atzīmju sarakstu",
+	"history": "Account &amp; Flag History",
 	"no-history": "Nav atzīmju vēsture.",
 
 	"state-all": "Visi stāvokļi",

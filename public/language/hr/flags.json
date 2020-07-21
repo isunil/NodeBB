@@ -27,11 +27,15 @@
 	"filter-cid-all": "Sve kategorije",
 	"apply-filters": "Primjeni filtere",
 
-	"quick-links": "Brze poveznice",
+	"quick-actions": "Quick Actions",
 	"flagged-user": "Označeni korisnici",
 	"view-profile": "Pogledaj profil",
 	"start-new-chat": "Pokreni novi razgovor",
 	"go-to-target": "Pogledaj metu zastave",
+	"assign-to-me": "Assign To Me",
+	"delete-post": "Delete Post",
+	"purge-post": "Purge Post",
+	"restore-post": "Restore Post",
 
 	"user-view": "Pogledaj profil",
 	"user-edit": "Uredi profil",
@@ -40,8 +44,7 @@
 	"add-note": "Dodaj bilješku",
 	"no-notes": "Nema podijeljenih bilješki",
 
-	"history": "Povijest zastava",
-	"back": "Nazad na popis zastava",
+	"history": "Account &amp; Flag History",
 	"no-history": "Nema povijesti zastava.",
 
 	"state-all": "Sva stanja",

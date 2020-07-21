@@ -34,7 +34,6 @@ apiController.loadConfig = async function (req) {
 		useOutgoingLinksPage: meta.config.useOutgoingLinksPage === 1,
 		outgoingLinksWhitelist: meta.config.useOutgoingLinksPage === 1 ? meta.config['outgoingLinks:whitelist'] : undefined,
 		allowGuestHandles: meta.config.allowGuestHandles === 1,
-		allowFileUploads: meta.config.allowFileUploads === 1,
 		allowTopicsThumbnail: meta.config.allowTopicsThumbnail === 1,
 		usePagination: meta.config.usePagination === 1,
 		disableChat: meta.config.disableChat === 1,
@@ -94,7 +93,6 @@ apiController.loadConfig = async function (req) {
 	config.topicSearchEnabled = settings.topicSearchEnabled || false;
 	config.bootswatchSkin = (meta.config.disableCustomUserSkins !== 1 && settings.bootswatchSkin && settings.bootswatchSkin !== '') ? settings.bootswatchSkin : '';
 	config = await plugins.fireHook('filter:config.get', config);
-	req.res.locals.config = config;
 	return config;
 };
 

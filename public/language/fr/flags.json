@@ -27,11 +27,15 @@
 	"filter-cid-all": "Toutes les catégories",
 	"apply-filters": "Appliquer les filtres",
 
-	"quick-links": "Permaliens",
+	"quick-actions": "Actions Rapide",
 	"flagged-user": "Utilisateurs signalés",
 	"view-profile": "Voir le profil",
 	"start-new-chat": "Démarrer un nouveau Chat",
 	"go-to-target": "Voir le signalement cible",
+	"assign-to-me": "Me l'assigner",
+	"delete-post": "Supprimer les messages",
+	"purge-post": "Supprimer définitivement",
+	"restore-post": "Restaurer les messages",
 
 	"user-view": "Voir le profil",
 	"user-edit": "Éditer le profil",
@@ -40,8 +44,7 @@
 	"add-note": "Ajouter une note",
 	"no-notes": "aucune note partagée",
 
-	"history": "Historiques des signalements",
-	"back": "Revenir à la liste des signalements",
+	"history": "Compte &amp; Historique des signalements",
 	"no-history": "aucun historique de signalements",
 
 	"state-all": "Tous les états",

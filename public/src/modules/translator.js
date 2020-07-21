@@ -278,7 +278,7 @@
 			}
 
 			if (namespace && !key) {
-				warn('Missing key in translation token "' + name + '"');
+				warn('Missing key in translation token "' + name + '" for language "' + self.lang + '"');
 				return Promise.resolve('[[' + namespace + ']]');
 			}
 
@@ -286,7 +286,7 @@
 			return translation.then(function (translated) {
 				// check if the translation is missing first
 				if (!translated) {
-					warn('Missing translation "' + name + '"');
+					warn('Missing translation "' + name + '" for language "' + self.lang + '"');
 					return backup || key;
 				}
 
@@ -526,6 +526,12 @@
 		escape: Translator.escape,
 		unescape: Translator.unescape,
 		getLanguage: Translator.getLanguage,
+
+		flush: function () {
+			Object.keys(Translator.cache).forEach(function (code) {
+				Translator.cache[code].translations = {};
+			});
+		},
 
 		/**
 		 * Legacy translator function for backwards compatibility

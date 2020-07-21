@@ -7,7 +7,7 @@ const nconf = require('nconf');
 const db = require('../database');
 const batch = require('../batch');
 const meta = require('../meta');
-const user = require('../user');
+const user = require('./index');
 const topics = require('../topics');
 const plugins = require('../plugins');
 const emailer = require('../emailer');
@@ -35,7 +35,7 @@ Digest.execute = async function (payload) {
 		});
 		winston.info('[user/jobs] Digest (' + payload.interval + ') scheduling completed. Sending emails; this may take some time...');
 	} catch (err) {
-		winston.error('[user/jobs] Could not send digests (' + payload.interval + ')', err);
+		winston.error('[user/jobs] Could not send digests (' + payload.interval + ')', err.stack);
 		throw err;
 	}
 };
@@ -139,7 +139,7 @@ Digest.send = async function (data) {
 				showUnsubscribe: true,
 			});
 		} catch (err) {
-			winston.error('[user/jobs] Could not send digest email', err);
+			winston.error('[user/jobs] Could not send digest email', err.stack);
 		}
 
 		if (data.interval !== 'alltime') {

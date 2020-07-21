@@ -3,13 +3,13 @@
 var os = require('os');
 var winston = require('winston');
 var _ = require('lodash');
-const nconf = require('nconf');
 
 var meta = require('../meta');
 var languages = require('../languages');
+var helpers = require('./helpers');
 
 module.exports = function (middleware) {
-	middleware.addHeaders = function addHeaders(req, res, next) {
+	middleware.addHeaders = helpers.try(function addHeaders(req, res, next) {
 		var headers = {
 			'X-Powered-By': encodeURI(meta.config['powered-by'] || 'NodeBB'),
 			'X-Frame-Options': meta.config['allow-from-uri'] ? 'ALLOW-FROM ' + encodeURI(meta.config['allow-from-uri']) : 'SAMEORIGIN',
@@ -55,12 +55,6 @@ module.exports = function (middleware) {
 			headers['X-Upstream-Hostname'] = os.hostname();
 		}
 
-		// Ensure that the session is valid. This block guards against edge-cases where the server-side session has
-		// been deleted (but client-side cookie still exists)
-		if (req.uid > 0 && !req.session.meta && !res.get('Set-Cookie')) {
-			res.clearCookie(nconf.get('sessionKey'), meta.configs.cookie.get());
-		}
-
 		for (var key in headers) {
 			if (headers.hasOwnProperty(key) && headers[key]) {
 				res.setHeader(key, headers[key]);
@@ -68,31 +62,30 @@ module.exports = function (middleware) {
 		}
 
 		next();
-	};
+	});
 
-	let langs = [];
-	middleware.autoLocale = function autoLocale(req, res, next) {
-		if (parseInt(req.uid, 10) > 0 || !meta.config.autoDetectLang) {
+	middleware.autoLocale = helpers.try(async function autoLocale(req, res, next) {
+		if (parseInt(req.uid, 10) > 0 || !meta.config.autoDetectLang || req.query.lang) {
 			return next();
 		}
-
-		var lang = req.acceptsLanguages(langs);
+		const langs = await listCodes();
+		const lang = req.acceptsLanguages(langs);
 		if (!lang) {
 			return next();
 		}
 		req.query.lang = lang;
 		next();
-	};
-
-	languages.listCodes(function (err, codes) {
-		if (err) {
-			winston.error('[middleware/autoLocale] Could not retrieve languages codes list!');
-			codes = [];
-		}
-
-		winston.verbose('[middleware/autoLocale] Retrieves languages list for middleware');
-		var defaultLang = meta.config.defaultLang || 'en-GB';
-
-		langs = _.uniq([defaultLang, ...codes]);
 	});
+
+	async function listCodes() {
+		const defaultLang = meta.config.defaultLang || 'en-GB';
+		try {
+			const codes = await languages.listCodes();
+			winston.verbose('[middleware/autoLocale] Retrieves languages list for middleware');
+			return _.uniq([defaultLang, ...codes]);
+		} catch (err) {
+			winston.error('[middleware/autoLocale] Could not retrieve languages codes list! ' + err.stack);
+			return [defaultLang];
+		}
+	}
 };

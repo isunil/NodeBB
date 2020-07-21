@@ -61,11 +61,9 @@ Categories.setPrivilege = async function (socket, data) {
 		throw new Error('[[error:no-user-or-group]]');
 	}
 
-	if (Array.isArray(data.privilege)) {
-		await Promise.all(data.privilege.map(privilege => groups[data.set ? 'join' : 'leave']('cid:' + data.cid + ':privileges:' + privilege, data.member)));
-	} else {
-		await groups[data.set ? 'join' : 'leave']('cid:' + data.cid + ':privileges:' + data.privilege, data.member);
-	}
+	await privileges.categories[data.set ? 'give' : 'rescind'](
+		Array.isArray(data.privilege) ? data.privilege : [data.privilege], data.cid, data.member
+	);
 
 	await events.log({
 		uid: socket.uid,
@@ -79,7 +77,9 @@ Categories.setPrivilege = async function (socket, data) {
 };
 
 Categories.getPrivilegeSettings = async function (socket, cid) {
-	if (!parseInt(cid, 10)) {
+	if (cid === 'admin') {
+		return await privileges.admin.list();
+	} else if (!parseInt(cid, 10)) {
 		return await privileges.global.list();
 	}
 	return await privileges.categories.list(cid);
